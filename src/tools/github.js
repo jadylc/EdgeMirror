@@ -5,7 +5,7 @@ import { fetchNoStore } from "../proxy-utils.js";
 /**
  * GitHub Proxy Accelerator (Modern Edition + Nav)
  * 路径: /github
- * 作者: w0x7ce
+ * 作者: jadylc
  * 风格: GitHub Light + 现代粒子交互 + 毛玻璃特效 + 胶囊导航
  */
 
@@ -162,7 +162,7 @@ function htmlPage(request) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub 加速通道 | w0x7ce</title>
+    <title>GitHub 加速通道 | EdgeMirror</title>
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg">
     <style>
         :root {
@@ -370,7 +370,7 @@ function htmlPage(request) {
     </div>
 
     <div class="footer">
-        Made with <span class="heart">❤</span> by <a href="https://github.com/w0x7ce" target="_blank">w0x7ce</a>
+        Made with <span class="heart">❤</span> by <a href="https://github.com/jadylc" target="_blank">jadylc</a>
     </div>
 
     <script>

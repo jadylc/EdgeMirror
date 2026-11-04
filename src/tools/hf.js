@@ -134,7 +134,7 @@ function htmlPage(request) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hugging Face Proxy | w0x7ce</title>
+    <title>Hugging Face Proxy | EdgeMirror</title>
     <style>
         :root {
             --bg: #f6f8fa; /* 浅灰背景 */
@@ -291,7 +291,7 @@ function htmlPage(request) {
     </div>
 
     <div class="footer">
-        Made with <span class="heart">❤</span> by <a href="https://github.com/tianrking" target="_blank">w0x7ce</a>
+        Made with <span class="heart">❤</span> by <a href="https://github.com/jadylc" target="_blank">jadylc</a>
     </div>
 
     <script>

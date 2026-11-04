@@ -13,29 +13,29 @@
 </p>
 
 <p align="center">
-  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror">
+  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy to Cloudflare" src="https://img.shields.io/badge/Deploy%20to-Cloudflare-f38020?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=111827">
   </a>
-  <a href="https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror">
+  <a href="https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy with Vercel" src="https://img.shields.io/badge/Deploy%20with-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white&labelColor=111827">
   </a>
 </p>
 
 <p align="center">
-  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/tianrking/edgemirror/verify.yml?branch=main&style=for-the-badge&label=verify">
+  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/jadylc/EdgeMirror/verify.yml?branch=main&style=for-the-badge&label=verify">
   <img alt="Runtime" src="https://img.shields.io/badge/runtime-Cloudflare%20Workers%20%7C%20Vercel%20Functions-0f172a?style=for-the-badge">
   <img alt="Language" src="https://img.shields.io/badge/language-JavaScript%20ESM-f7df1e?style=for-the-badge&labelColor=111827">
   <img alt="Package manager" src="https://img.shields.io/badge/package-npm-cb3837?style=for-the-badge">
-  <img alt="Maintainer" src="https://img.shields.io/badge/maintainer-tianrking-2563eb?style=for-the-badge">
+  <img alt="Maintainer" src="https://img.shields.io/badge/maintainer-jadylc-2563eb?style=for-the-badge">
 </p>
 
 ## 项目定位
 
 EdgeMirror 是一个单域名边缘镜像网关，用一个仓库提供一组常用开发源加速服务。推荐的生产玩法是一个公开 `YOUR_DOMAIN`，规范命名空间使用 `/repo`、`/pkg`、`/sdk`、`/oci`、`/git`；原有 `/pypi`、`/npm`、`/go`、`/maven`、`/crates`、`/downloads`、`/github`、`/v2` 等入口继续兼容。
 
-维护者当前在线部署：[box.w0x7ce.eu](https://box.w0x7ce.eu/)。个人 Fork 可以直接使用 `workers.dev`，自定义域名是可选项。
+维护者当前在线部署：[mirror.ygmm.de](https://mirror.ygmm.de/)。个人 Fork 可以直接使用 `workers.dev`，自定义域名是可选项。
 
-维护者：[tianrking](https://github.com/tianrking)
+维护者：[jadylc](https://github.com/jadylc)
 
 关键词：边缘镜像网关，CDN 风格源加速，Cloudflare Workers 代理，Vercel Functions 代理，PyPI 加速，PyTorch wheel 代理，Hugging Face 镜像，Docker registry 代理，GitHub raw 代理，Linux 软件源代理，npm registry 代理，Go module proxy，Maven / Gradle 镜像，crates.io sparse registry 代理，运行时下载加速。
 
@@ -175,12 +175,12 @@ OpenWrt 25.12 及以后 -> APK  -> /etc/apk/repositories.d/distfeeds.list
 点击 README 顶部的 Cloudflare 按钮，或直接打开：
 
 ```text
-https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror
+https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror
 ```
 
 Cloudflare 会读取 `wrangler.toml`，创建 Worker，并部署到当前账户提供的 Worker 名称。默认配置是可移植的一键部署配置：启用 `workers.dev`，关闭 preview URLs，并且不会默认绑定维护者自己的自定义域名。
 
-当前已经验证的维护者部署地址为 `https://box.w0x7ce.eu`。个人部署时可以使用 Wrangler 返回的 `workers.dev` 主机名，或在部署成功后再绑定自己的自定义域名。
+当前已经验证的维护者部署地址为 `https://mirror.ygmm.de`。个人部署时可以使用 Wrangler 返回的 `workers.dev` 主机名，或在部署成功后再绑定自己的自定义域名。
 
 Worker 部署成功后，可以在 Cloudflare 控制台添加一个自定义域名；也可以确认该域名属于当前 Cloudflare 账户后，把 `wrangler.custom-domain.example.toml` 里的 route 配置复制到 `wrangler.toml`。所有工具仍然使用同一套路径路由。
 
@@ -189,7 +189,7 @@ Worker 部署成功后，可以在 Cloudflare 控制台添加一个自定义域�
 点击 README 顶部的 Vercel 按钮，或直接打开：
 
 ```text
-https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror
+https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror
 ```
 
 Vercel 会使用 `api/index.js` 作为 Web Handler 函数入口，并根据 `vercel.json` 把所有路径转发到该函数。Vercel 部署使用同一套路由：`/edgemirror`、`/pypi`、`/hf`、`/github`、`/docker`、`/mirrors`、`/proxy`、`/npm`、`/go`、`/maven`、`/crates`、`/downloads`、`/help`。Docker Registry API 流量会在 `/v2`、`/token`、`/_worker_blob_proxy` 自动识别，因此单个 Vercel 域名也可以直接用于 Docker pull，不需要把 `/docker` 写进镜像名。

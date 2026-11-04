@@ -5,7 +5,7 @@ workers_dev = true
 preview_urls = false
 
 routes = [
-  { pattern = "edgemirror.w0x7ce.eu", custom_domain = true }
+  { pattern = "mirror.ygmm.de", custom_domain = true }
 ]
 
 [observability]

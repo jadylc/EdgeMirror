@@ -216,7 +216,7 @@ function htmlPage(request) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Python Proxy | w0x7ce</title>
+    <title>Universal Python Proxy | EdgeMirror</title>
     <style>
         :root { --text-main: #2f3d4b; --text-muted: #73808d; --accent: #d89086; --btn-bg: #e8f1f6; --btn-hover: #dbe9f0; --border: #e3ebf2; --cmd-bg: #f8fbfd; --cmd-text: #334155; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -293,7 +293,7 @@ function htmlPage(request) {
             <p><span class="badge-blue">SMART</span> 自动匹配 CUDA 版本 (默认 cu118)</p>
         </div>
     </div>
-    <div class="footer">Made with <span class="heart">❤</span> by <a href="https://github.com/w0x7ce" target="_blank">w0x7ce</a></div>
+    <div class="footer">Made with <span class="heart">❤</span> by <a href="https://github.com/jadylc" target="_blank">jadylc</a></div>
     <script>
         const baseUrl = "${baseUrl}";
         const input = document.getElementById('urlInput');

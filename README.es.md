@@ -13,16 +13,16 @@
 </p>
 
 <p align="center">
-  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror">
+  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy to Cloudflare" src="https://img.shields.io/badge/Deploy%20to-Cloudflare-f38020?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=111827">
   </a>
-  <a href="https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror">
+  <a href="https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy with Vercel" src="https://img.shields.io/badge/Deploy%20with-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white&labelColor=111827">
   </a>
 </p>
 
 <p align="center">
-  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/tianrking/edgemirror/verify.yml?branch=main&style=for-the-badge&label=verify">
+  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/jadylc/EdgeMirror/verify.yml?branch=main&style=for-the-badge&label=verify">
   <img alt="Runtime" src="https://img.shields.io/badge/runtime-Cloudflare%20Workers%20%7C%20Vercel%20Functions-0f172a?style=for-the-badge">
   <img alt="JavaScript ESM" src="https://img.shields.io/badge/JavaScript-ESM-f7df1e?style=for-the-badge&labelColor=111827">
   <img alt="Single domain" src="https://img.shields.io/badge/single--domain-paths-2563eb?style=for-the-badge">
@@ -33,9 +33,9 @@
 
 EdgeMirror es un gateway edge mirror de un solo dominio. El modelo recomendado usa un `YOUR_DOMAIN` público con namespaces canónicos en `/repo`, `/pkg`, `/sdk`, `/oci` y `/git`. Las rutas existentes como `/pypi`, `/npm`, `/go`, `/maven`, `/crates`, `/downloads`, `/github` y `/v2` siguen siendo compatibles.
 
-Deployment actual del mantenedor: [box.w0x7ce.eu](https://box.w0x7ce.eu/). Los forks personales pueden usar `workers.dev`; el custom domain es opcional.
+Deployment actual del mantenedor: [mirror.ygmm.de](https://mirror.ygmm.de/). Los forks personales pueden usar `workers.dev`; el custom domain es opcional.
 
-Mantenedor: [tianrking](https://github.com/tianrking)
+Mantenedor: [jadylc](https://github.com/jadylc)
 
 Palabras clave: Cloudflare Workers proxy, Vercel Functions proxy, PyPI mirror, PyTorch wheels, Hugging Face mirror, Docker registry proxy, GitHub raw proxy, Linux mirror proxy, npm registry proxy, Go module proxy, Maven proxy, Gradle mirror, crates.io sparse registry proxy.
 
@@ -144,12 +144,12 @@ OpenWrt 25.12 y posteriores -> APK  -> /etc/apk/repositories.d/distfeeds.list
 Usa el botón de Cloudflare al principio del README o abre:
 
 ```text
-https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror
+https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror
 ```
 
 Cloudflare lee `wrangler.toml`, crea el Worker y lo despliega con el nombre indicado por la cuenta. La configuración portable activa `workers.dev`, desactiva preview URLs y no vincula el dominio personal del mantenedor.
 
-El deployment verificado del mantenedor es `https://box.w0x7ce.eu`. Los forks personales pueden usar el hostname `workers.dev` que devuelve Wrangler o añadir su propio custom domain.
+El deployment verificado del mantenedor es `https://mirror.ygmm.de`. Los forks personales pueden usar el hostname `workers.dev` que devuelve Wrangler o añadir su propio custom domain.
 
 Para desplegar desde una copia local autenticada:
 
@@ -166,7 +166,7 @@ Después del despliegue puedes añadir un custom domain en Cloudflare sin cambia
 Vercel usa `api/index.js` como Web Handler y `vercel.json` para dirigir todas las rutas a la misma función:
 
 ```text
-https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror
+https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror
 ```
 
 ## Ejemplos

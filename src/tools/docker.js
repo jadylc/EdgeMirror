@@ -163,7 +163,7 @@ function htmlPage(request) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker Proxy Accelerator | w0x7ce</title>
+    <title>Docker Proxy Accelerator | EdgeMirror</title>
     <style>
         :root { 
             --text-main: #2f3d4b; 
@@ -348,7 +348,7 @@ function htmlPage(request) {
     </div>
 
     <div class="footer">
-        Made with <span class="heart">❤</span> by <a href="https://github.com/tianrking" target="_blank">w0x7ce</a>
+        Made with <span class="heart">❤</span> by <a href="https://github.com/jadylc" target="_blank">jadylc</a>
     </div>
 
     <script>

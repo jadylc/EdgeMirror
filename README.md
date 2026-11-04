@@ -13,20 +13,20 @@
 </p>
 
 <p align="center">
-  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror">
+  <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy to Cloudflare" src="https://img.shields.io/badge/Deploy%20to-Cloudflare-f38020?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=111827">
   </a>
-  <a href="https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror">
+  <a href="https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror">
     <img alt="Deploy with Vercel" src="https://img.shields.io/badge/Deploy%20with-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white&labelColor=111827">
   </a>
 </p>
 
 <p align="center">
-  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/tianrking/edgemirror/verify.yml?branch=main&style=for-the-badge&label=verify">
+  <img alt="Verify" src="https://img.shields.io/github/actions/workflow/status/jadylc/EdgeMirror/verify.yml?branch=main&style=for-the-badge&label=verify">
   <img alt="Runtime" src="https://img.shields.io/badge/runtime-Cloudflare%20Workers%20%7C%20Vercel%20Functions-0f172a?style=for-the-badge">
   <img alt="Language" src="https://img.shields.io/badge/language-JavaScript%20ESM-f7df1e?style=for-the-badge&labelColor=111827">
   <img alt="Package manager" src="https://img.shields.io/badge/package-npm-cb3837?style=for-the-badge">
-  <img alt="Maintainer" src="https://img.shields.io/badge/maintainer-tianrking-2563eb?style=for-the-badge">
+  <img alt="Maintainer" src="https://img.shields.io/badge/maintainer-jadylc-2563eb?style=for-the-badge">
 </p>
 
 ## Why EdgeMirror
@@ -35,9 +35,9 @@ EdgeMirror is a single-domain edge mirror gateway for common developer sources. 
 
 Every page includes a shared language switcher for English, Spanish, and Chinese. Tool names stay in English while explanations, usage notes, and common UI labels follow the selected language.
 
-Current maintainer deployment: [box.w0x7ce.eu](https://box.w0x7ce.eu/). A custom domain is optional for personal forks and is not required for any route.
+Current maintainer deployment: [mirror.ygmm.de](https://mirror.ygmm.de/). A custom domain is optional for personal forks and is not required for any route.
 
-Maintainer: [tianrking](https://github.com/tianrking)
+Maintainer: [jadylc](https://github.com/jadylc)
 
 Keywords: edge mirror gateway, CDN-style source acceleration, Cloudflare Workers proxy, Vercel Functions proxy, PyPI mirror accelerator, PyTorch wheel proxy, Hugging Face mirror, Docker registry proxy, GitHub raw proxy, Linux mirror proxy, npm registry proxy, Go module proxy, Maven proxy, Gradle mirror, crates.io sparse registry proxy, runtime download accelerator.
 
@@ -175,12 +175,12 @@ OpenWrt 25.12 and later    -> APK  -> /etc/apk/repositories.d/distfeeds.list
 Click the Cloudflare button at the top of this README, or open:
 
 ```text
-https://deploy.workers.cloudflare.com/?url=https://github.com/tianrking/edgemirror
+https://deploy.workers.cloudflare.com/?url=https://github.com/jadylc/EdgeMirror
 ```
 
 Cloudflare reads `wrangler.toml`, creates the Worker, and deploys it to the account-provided Worker name. The default configuration is intentionally portable: it enables `workers.dev`, disables preview URLs, and does not bind the maintainer's custom domain.
 
-The currently verified maintainer deployment is `https://box.w0x7ce.eu`. Personal forks can use the returned `workers.dev` hostname or attach their own custom domain after deployment.
+The currently verified maintainer deployment is `https://mirror.ygmm.de`. Personal forks can use the returned `workers.dev` hostname or attach their own custom domain after deployment.
 
 After the Worker is deployed, add one custom domain in the Cloudflare dashboard, or copy the route block from `wrangler.custom-domain.example.toml` into `wrangler.toml` after confirming that the domain belongs to your Cloudflare account. Every tool will still use the same path model on that domain.
 
@@ -189,7 +189,7 @@ After the Worker is deployed, add one custom domain in the Cloudflare dashboard,
 Click the Vercel button at the top of this README, or open:
 
 ```text
-https://vercel.com/new/clone?repository-url=https://github.com/tianrking/edgemirror
+https://vercel.com/new/clone?repository-url=https://github.com/jadylc/EdgeMirror
 ```
 
 Vercel uses `api/index.js` as a Web Handler function and `vercel.json` to route every path to that function. The Vercel deployment uses the same path model: `/edgemirror`, `/pypi`, `/hf`, `/github`, `/docker`, `/mirrors`, `/proxy`, `/npm`, `/go`, `/maven`, `/crates`, `/downloads`, and `/help`. Docker Registry API traffic is also auto-detected at `/v2`, `/token`, and `/_worker_blob_proxy`, so a single Vercel domain can serve Docker pulls without a `/docker` prefix in the image name.
