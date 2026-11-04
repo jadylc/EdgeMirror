@@ -1,21 +1,21 @@
 const api = await import("../api/index.js");
 
 const BASE_URL = "https://edgemirror.vercel.app";
-const PRIMARY_ORIGIN = "https://box.w0x7ce.eu";
+const PRIMARY_ORIGIN = "https://mirror.ygmm.de";
 const TOOLS = [
-  { key: "portal", path: "/edgemirror", host: "box.w0x7ce.eu" },
-  { key: "pypi", path: "/pypi", host: "pypi.w0x7ce.eu" },
-  { key: "hf", path: "/hf", host: "hf.w0x7ce.eu" },
-  { key: "github", path: "/github", host: "github.w0x7ce.eu" },
-  { key: "docker", path: "/docker", host: "docker.w0x7ce.eu" },
-  { key: "mirrors", path: "/mirrors", host: "mirrors.w0x7ce.eu" },
-  { key: "proxy", path: "/proxy", host: "proxy.w0x7ce.eu" },
-  { key: "npm", path: "/npm", host: "npm.w0x7ce.eu" },
-  { key: "go", path: "/go", host: "go.w0x7ce.eu" },
-  { key: "maven", path: "/maven", host: "maven.w0x7ce.eu" },
-  { key: "crates", path: "/crates", host: "crates.w0x7ce.eu" },
-  { key: "downloads", path: "/downloads", host: "downloads.w0x7ce.eu" },
-  { key: "help", path: "/help", host: "box.w0x7ce.eu" },
+  { key: "portal", path: "/edgemirror", host: "mirror.ygmm.de" },
+  { key: "pypi", path: "/pypi", host: "mirror.ygmm.de" },
+  { key: "hf", path: "/hf", host: "mirror.ygmm.de" },
+  { key: "github", path: "/github", host: "mirror.ygmm.de" },
+  { key: "docker", path: "/docker", host: "mirror.ygmm.de" },
+  { key: "mirrors", path: "/mirrors", host: "mirror.ygmm.de" },
+  { key: "proxy", path: "/proxy", host: "mirror.ygmm.de" },
+  { key: "npm", path: "/npm", host: "mirror.ygmm.de" },
+  { key: "go", path: "/go", host: "mirror.ygmm.de" },
+  { key: "maven", path: "/maven", host: "mirror.ygmm.de" },
+  { key: "crates", path: "/crates", host: "mirror.ygmm.de" },
+  { key: "downloads", path: "/downloads", host: "mirror.ygmm.de" },
+  { key: "help", path: "/help", host: "mirror.ygmm.de" },
 ];
 
 const PAGE_IDENTITY = new Map([
@@ -85,11 +85,14 @@ const checks = [
     },
   },
   {
-    name: "help default english",
+    name: "help default chinese",
     request: new Request(`${BASE_URL}/help`),
     assert: async (response) => {
       const html = await response.text();
-      return response.status === 200 && html.includes("One domain. Every accelerator.") && html.includes('lang="en"');
+      return response.status === 200
+        && html.includes("一个域名，所有加速入口。")
+        && html.includes('lang="zh-CN"')
+        && html.includes(`${BASE_URL}/pypi"`);
     },
   },
   {
@@ -101,11 +104,11 @@ const checks = [
     },
   },
   {
-    name: "help chinese language",
-    request: new Request(`${BASE_URL}/help?lang=zh`),
+    name: "help english language",
+    request: new Request(`${BASE_URL}/help?lang=en`),
     assert: async (response) => {
       const html = await response.text();
-      return response.status === 200 && html.includes("一个域名，所有加速入口。") && html.includes('lang="zh-CN"') && html.includes("/pypi?lang=zh");
+      return response.status === 200 && html.includes("One domain. Every accelerator.") && html.includes('lang="en"') && html.includes("/pypi?lang=en");
     },
   },
 ];
@@ -119,32 +122,33 @@ for (const check of checks) {
 }
 
 for (const tool of TOOLS) {
-  const response = await api.default.fetch(new Request(`${BASE_URL}${tool.path}`));
+  const response = await api.default.fetch(new Request(`${BASE_URL}${tool.path}?lang=en`));
   const html = await response.text();
   assertHtmlResponse(response, html, `${tool.key} page`);
-  assertNavLinks(html, TOOLS.map((item) => urlFor(BASE_URL, item.path)), `${tool.key} path nav`);
+  assertNavLinks(html, TOOLS.map((item) => urlFor(BASE_URL, item.path, "en")), `${tool.key} path nav`);
   assertPageIdentity(html, tool.key, `${tool.key} path page`);
   console.log(`ok ${tool.key} path page nav`);
 }
 
 for (const tool of TOOLS) {
-  const response = await api.default.fetch(new Request(`${PRIMARY_ORIGIN}${tool.path}`));
+  const response = await api.default.fetch(new Request(`${PRIMARY_ORIGIN}${tool.path}?lang=en`));
   const html = await response.text();
   assertHtmlResponse(response, html, `${tool.key} primary-domain path page`);
-  assertNavLinks(html, TOOLS.map((item) => urlFor(PRIMARY_ORIGIN, item.path)), `${tool.key} primary-domain nav`);
+  assertNavLinks(html, TOOLS.map((item) => urlFor(PRIMARY_ORIGIN, item.path, "en")), `${tool.key} primary-domain nav`);
   assertPageIdentity(html, tool.key, `${tool.key} primary-domain path page`);
   console.log(`ok ${tool.key} primary-domain path page nav`);
 }
 
-for (const tool of TOOLS) {
-  const hostUrl = tool.key === "help" ? `https://${tool.host}${tool.path}` : `https://${tool.host}/`;
-  const response = await api.default.fetch(new Request(hostUrl));
-  const html = await response.text();
-  assertHtmlResponse(response, html, `${tool.key} host page`);
-  assertNavLinks(html, TOOLS.map((item) => urlFor(PRIMARY_ORIGIN, item.path)), `${tool.key} host nav`);
-  assertPageIdentity(html, tool.key, `${tool.key} host page`);
-  console.log(`ok ${tool.key} host page nav`);
+const rootResponse = await api.default.fetch(new Request(`${PRIMARY_ORIGIN}/`));
+const rootHtml = await rootResponse.text();
+assertHtmlResponse(rootResponse, rootHtml, "primary-domain root");
+if (!rootHtml.includes('lang="zh-CN"')) {
+  throw new Error("primary-domain root should default to Chinese");
 }
+if (!rootHtml.includes("把每一次安装请求")) {
+  throw new Error("primary-domain root should render the portal hero");
+}
+console.log("ok primary-domain root portal in Chinese");
 
 function assertHtmlResponse(response, html, name) {
   if (response.status !== 200 || !response.headers.get("content-type")?.includes("text/html")) {
@@ -182,6 +186,10 @@ function assertPageIdentity(html, key, name) {
   }
 }
 
-function urlFor(origin, path) {
-  return new URL(path || "/", origin).toString();
+function urlFor(origin, path, lang = "zh") {
+  const url = new URL(path || "/", origin);
+  if (lang !== "zh") {
+    url.searchParams.set("lang", lang);
+  }
+  return url.toString();
 }

@@ -4,15 +4,17 @@ export const LANGUAGES = {
   zh: { label: "中文", htmlLang: "zh-CN" },
 };
 
+export const DEFAULT_LANGUAGE = "zh";
+
 export function getLanguage(request) {
   const url = new URL(request.url);
   const lang = url.searchParams.get("lang");
-  return Object.hasOwn(LANGUAGES, lang) ? lang : "en";
+  return Object.hasOwn(LANGUAGES, lang) ? lang : DEFAULT_LANGUAGE;
 }
 
 export function localizeUrl(url, lang) {
   const next = new URL(url);
-  if (lang === "en") {
+  if (lang === DEFAULT_LANGUAGE) {
     next.searchParams.delete("lang");
   } else {
     next.searchParams.set("lang", lang);
@@ -54,14 +56,14 @@ export function renderHeaderLanguageSwitch(request, currentLang) {
 export function renderClientI18nScript(currentLang) {
   const payload = JSON.stringify({
     lang: currentLang,
-    htmlLang: LANGUAGES[currentLang]?.htmlLang ?? LANGUAGES.en.htmlLang,
-    dictionary: UI_TRANSLATIONS[currentLang] ?? UI_TRANSLATIONS.en,
+    htmlLang: LANGUAGES[currentLang]?.htmlLang ?? LANGUAGES[DEFAULT_LANGUAGE].htmlLang,
+    dictionary: UI_TRANSLATIONS[currentLang] ?? UI_TRANSLATIONS[DEFAULT_LANGUAGE],
   }).replaceAll("</", "<\\/");
 
   return `<script>window.__EDGEMIRROR_I18N__=${payload};(function(){
   var config = window.__EDGEMIRROR_I18N__;
   if (!config || !config.dictionary) return;
-  document.documentElement.lang = config.htmlLang || "en";
+  document.documentElement.lang = config.htmlLang || "zh-CN";
   var dictionary = config.dictionary;
   var skipTags = new Set(["SCRIPT", "STYLE", "CODE", "PRE", "SVG", "PATH"]);
   function translate(value) {

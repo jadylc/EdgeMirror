@@ -40,7 +40,12 @@ const TOOLS = TOOL_DEFINITIONS.map((tool) => ({
   handler: HANDLERS.get(tool.key),
 }));
 
-const HOST_ROUTES = new Map(TOOLS.map((tool) => [tool.host, tool]));
+// Single-domain deployment: the primary host is served by the path routes below,
+// so only distinct extra domains (if a fork ever adds any) get host routing.
+const HOST_ROUTES = new Map(
+  TOOLS.filter((tool) => tool.host && tool.host !== PROJECT.primaryHost)
+    .map((tool) => [tool.host, tool]),
+);
 const PATH_ROUTES = new Map(TOOLS.map((tool) => [tool.key, tool]));
 PATH_ROUTES.set("help", { key: "help", handler: help });
 PATH_ROUTES.set("catalog", { key: "catalog", handler: catalog });
