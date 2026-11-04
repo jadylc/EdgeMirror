@@ -1,5 +1,5 @@
 import portal from "./tools/portal.js";
-import { ADS_TXT, CATALOG_DEFINITION, HEALTH_PATHS, HELP_DEFINITION, PROJECT, TOOL_DEFINITIONS } from "./config.js";
+import { CATALOG_DEFINITION, HEALTH_PATHS, HELP_DEFINITION, PROJECT, TOOL_DEFINITIONS } from "./config.js";
 import docker from "./tools/docker.js";
 import github from "./tools/github.js";
 import help from "./tools/help.js";
@@ -60,10 +60,6 @@ export default {
 
 async function routeRequest(request, env, ctx) {
   const url = new URL(request.url);
-
-  if (url.pathname === "/ads.txt") {
-    return textResponse(`${ADS_TXT}\n`);
-  }
 
   if (HEALTH_PATHS.has(url.pathname)) {
     return jsonResponse({
