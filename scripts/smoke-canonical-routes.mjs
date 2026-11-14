@@ -71,6 +71,19 @@ globalThis.fetch = async (input, init = {}) => {
     });
   }
 
+  if (request.url === "https://ghcr.io/v2/metacubex/metacubexd/manifests/latest") {
+    return new Response(null, {
+      status: 401,
+      headers: {
+        "Www-Authenticate": "Bearer realm=\"https://ghcr.io/token\",service=\"ghcr.io\",scope=\"repository:metacubex/metacubexd:pull\"",
+      },
+    });
+  }
+
+  if (request.url.startsWith("https://ghcr.io/token?")) {
+    return jsonResponse({ token: "ghcr-token" });
+  }
+
   if (request.url.startsWith("https://auth.docker.io/token?")) {
     return jsonResponse({ token: "test-token" });
   }
@@ -192,8 +205,12 @@ try {
   const dockerResponse = await worker.fetch(new Request(`${BASE_URL}/oci/docker/v2/`, { method: "HEAD" }));
   assert(dockerResponse.status === 401, "canonical Docker v2 route should preserve registry auth status");
   assert(
-    dockerResponse.headers.get("www-authenticate")?.includes(`realm=\"${BASE_URL}/oci/docker/token\"`),
+    dockerResponse.headers.get("www-authenticate")?.includes(`realm=\"${BASE_URL}/oci/docker/token?realm=`),
     "canonical Docker auth realm mismatch",
+  );
+  assert(
+    dockerResponse.headers.get("www-authenticate")?.includes(encodeURIComponent("https://auth.docker.io/token")),
+    "canonical Docker auth realm should carry the upstream realm",
   );
   assert(fetchCalls[0]?.url === "https://registry-1.docker.io/v2/", "canonical Docker target mismatch");
   assert(fetchCalls[0]?.cache === "no-store", "canonical Docker fetch must bypass cache");
@@ -206,6 +223,44 @@ try {
   assert(tokenResponse.status === 200, "canonical Docker token route should return 200");
   assert(fetchCalls[0]?.url.startsWith("https://auth.docker.io/token?"), "canonical Docker token target mismatch");
   console.log("ok canonical OCI Docker route");
+
+  fetchCalls.length = 0;
+  const ghcrResponse = await worker.fetch(new Request(
+    `${BASE_URL}/v2/ghcr/metacubex/metacubexd/manifests/latest`,
+  ));
+  assert(ghcrResponse.status === 401, "prefixed registry route should preserve upstream auth status");
+  assert(
+    fetchCalls[0]?.url === "https://ghcr.io/v2/metacubex/metacubexd/manifests/latest",
+    "prefixed registry route must map /v2/ghcr to ghcr.io",
+  );
+  const ghcrRealm = ghcrResponse.headers.get("www-authenticate")?.match(/realm="([^"]+)"/)?.[1];
+  assert(ghcrRealm?.includes("realm="), "prefixed registry realm should be proxied with its upstream realm");
+
+  fetchCalls.length = 0;
+  // Docker clients append service/scope to the realm URL themselves.
+  const ghcrTokenResponse = await worker.fetch(new Request(
+    `${ghcrRealm}&service=ghcr.io&scope=${encodeURIComponent("repository:metacubex/metacubexd:pull")}`,
+  ));
+  assert(ghcrTokenResponse.status === 200, "prefixed registry token route should return 200");
+  assert(
+    fetchCalls[0]?.url.startsWith("https://ghcr.io/token?"),
+    "prefixed registry token must go to the upstream auth host",
+  );
+  assert(
+    fetchCalls[0]?.url.includes("service=ghcr.io"),
+    "prefixed registry token must forward the service parameter",
+  );
+
+  fetchCalls.length = 0;
+  const unsafeRealmResponse = await worker.fetch(new Request(
+    `${BASE_URL}/token?realm=${encodeURIComponent("http://169.254.169.254/latest/meta-data")}&service=ghcr.io`,
+  ));
+  assert(unsafeRealmResponse.status === 200, "untrusted realm request should fall back to Docker Hub auth");
+  assert(
+    fetchCalls[0]?.url.startsWith("https://auth.docker.io/token?"),
+    "untrusted realm must not be followed",
+  );
+  console.log("ok prefixed registry routes and realm passthrough");
 
   fetchCalls.length = 0;
   const githubResponse = await worker.fetch(new Request(

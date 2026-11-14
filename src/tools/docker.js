@@ -36,6 +36,26 @@ const ROUTES = {
 
 const DEFAULT_UPSTREAM = "https://registry-1.docker.io";
 
+// 只允许把 realm 指向上游自己的鉴权端点，避免 token 端点变成任意 SSRF 跳板
+const TRUSTED_REALM_HOSTS = new Set([
+    "auth.docker.io",
+    "ghcr.io",
+    "quay.io",
+    "gcr.io",
+    "k8s.gcr.io",
+    "registry.k8s.io",
+    "nvcr.io",
+]);
+
+function isTrustedRealm(realm) {
+    try {
+        const url = new URL(realm);
+        return url.protocol === "https:" && TRUSTED_REALM_HOSTS.has(url.hostname.toLowerCase());
+    } catch {
+        return false;
+    }
+}
+
 export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
@@ -78,19 +98,34 @@ export default {
         // 5. 路由解析逻辑
         let upstream = DEFAULT_UPSTREAM;
         let pathParts = url.pathname.split('/');
-        let potentialRoute = pathParts[1]; // 获取第一个路径段，如 /quay/...
+        let potentialRoute = pathParts[1]; // 兼容 /quay/... 这种直接前缀
+  
+        // Docker 客户端真正发的是 /v2/<prefix>/<owner>/<repo>/...，注册表前缀在第二段
+        const registryRoute = pathParts[1] === 'v2' && ROUTES[pathParts[2]] ? pathParts[2] : null;
         
         if (ROUTES[potentialRoute]) {
             // 命中路由表 (例如 quay, gcr)
             upstream = ROUTES[potentialRoute];
             url.pathname = url.pathname.replace(`/${potentialRoute}`, '');
+        } else if (registryRoute) {
+            // /v2/ghcr/owner/repo/... -> https://ghcr.io/v2/owner/repo/...
+            upstream = ROUTES[registryRoute];
+            url.pathname = url.pathname.replace(`/v2/${registryRoute}`, '/v2');
         } else {
             // 默认为 Docker Hub，处理 Token 和 Library 补全
             if (url.pathname.includes('/token')) {
-                const tokenUrl = new URL("https://auth.docker.io" + url.pathname + url.search);
+                // realm 由上游 401 响应带过来，支持 ghcr/quay/gcr 等非 Docker Hub 注册表
+                const params = new URLSearchParams(url.searchParams);
+                const realm = params.get('realm');
+                params.delete('realm');
+                const trustedRealm = realm && isTrustedRealm(realm) ? realm : null;
+                const tokenUrl = trustedRealm
+                    ? new URL(trustedRealm)
+                    : new URL("https://auth.docker.io" + url.pathname);
+                for (const [key, value] of params) tokenUrl.searchParams.set(key, value);
                 const scope = tokenUrl.searchParams.get('scope');
-                // 自动补全 library 权限 (pull nginx -> pull library/nginx)
-                if (scope) {
+                // 只在 Docker Hub 上自动补全 library 权限 (pull nginx -> pull library/nginx)
+                if (!trustedRealm && scope) {
                     const scopeParts = scope.split(':');
                     if (scopeParts.length === 3 && scopeParts[0] === 'repository' && !scopeParts[1].includes('/')) {
                         const newScope = `repository:library/${scopeParts[1]}:${scopeParts[2]}`;
@@ -127,10 +162,12 @@ export default {
         const responseHeaders = new Headers(response.headers);
         const status = response.status;
 
-        // 8. 修改 Www-Authenticate 头 (指向 Worker)
+        // 8. 修改 Www-Authenticate 头 (指向 Worker，同时把上游真实 realm 带上)
         const authHeader = responseHeaders.get("Www-Authenticate");
         if (authHeader) {
-            responseHeaders.set("Www-Authenticate", authHeader.replace(/realm="([^"]+)"/, `realm="${workerUrl}/token"`));
+            const realm = authHeader.match(/realm="([^"]+)"/)?.[1];
+            const proxiedRealm = realm ? `${workerUrl}/token?realm=${encodeURIComponent(realm)}` : `${workerUrl}/token`;
+            responseHeaders.set("Www-Authenticate", authHeader.replace(/realm="[^"]+"/, `realm="${proxiedRealm}"`));
         }
 
         // 9. 【核心修复】拦截 S3 重定向
